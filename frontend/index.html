@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gambit · AI/ML Chess Engine</title>
+    <meta name="description" content="Gambit — an AI/ML driven chess engine portfolio project with a premium Deep Charcoal and Matte Gold interface.">
+
+    <!-- Google Fonts: a serif display face for headings, a clean grotesque for UI text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         SCREEN 1 · LANDING & AUTH
+         A two-pane hero: text + login form on the left, an ambient,
+         self-playing decorative chessboard on the right.
+    ═════════════════════════════════════════════════════════════════════ -->
+    <section id="screen-landing" class="screen landing">
+
+        <!-- Left pane: brand intro + minimalist login form -->
+        <div class="landing__pane landing__pane--auth">
+            <div class="auth-block">
+                <span class="brand-mark" aria-hidden="true">♞</span>
+                <p class="eyebrow">Gambit Engine</p>
+                <h1 class="hero-title">The Game of Kings,<br>Reimagined.</h1>
+                <p class="hero-subtitle">AI/ML Driven Chess Engine</p>
+
+                <!-- Login form. Submission is intercepted in script.js;
+                     there is no server round-trip for this demo. -->
+                <form id="loginForm" class="auth-form" novalidate>
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username"
+                               autocomplete="username" placeholder="grandmaster" required>
+                    </div>
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password"
+                               autocomplete="current-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn--gold">Enter Arena</button>
+                    <p class="auth-hint" id="authHint">Use any credentials to enter the demo.</p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right pane: decorative, non-interactive ambient board.
+             Squares + pieces are generated and animated by script.js. -->
+        <div class="landing__pane landing__pane--visual" aria-hidden="true">
+            <div class="ambient-stage">
+                <div class="ambient-glow"></div>
+                <div class="ambient-board" id="ambientBoard"></div>
+                <p class="ambient-caption" id="ambientCaption">e2 → e4</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         SCREEN 2 · GAME DASHBOARD  (hidden until login)
+         Three-column CSS Grid: nav sidebar · gameplay · live info panel.
+    ═════════════════════════════════════════════════════════════════════ -->
+    <section id="screen-dashboard" class="screen dashboard hidden">
+
+        <!-- Column 1 · Narrow icon sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar__brand" title="Gambit">♞</div>
+
+            <nav class="sidebar__nav">
+                <button class="nav-item is-active" data-view="play" title="Play">
+                    <span class="nav-item__icon" aria-hidden="true">♟</span>
+                    <span class="nav-item__label">Play</span>
+                </button>
+                <button class="nav-item" data-view="analytics" title="Analytics">
+                    <span class="nav-item__icon" aria-hidden="true">▦</span>
+                    <span class="nav-item__label">Analytics</span>
+                </button>
+                <button class="nav-item" data-view="history" title="History">
+                    <span class="nav-item__icon" aria-hidden="true">⟲</span>
+                    <span class="nav-item__label">History</span>
+                </button>
+            </nav>
+
+            <button class="nav-item sidebar__logout" id="logoutBtn" title="Sign out">
+                <span class="nav-item__icon" aria-hidden="true">⏻</span>
+                <span class="nav-item__label">Exit</span>
+            </button>
+        </aside>
+
+        <!-- Column 2 · Center gameplay area -->
+        <main class="stage">
+            <div class="stage__inner">
+
+                <!-- Top player tag (opponent) -->
+                <div class="player-tag player-tag--top">
+                    <span class="player-tag__avatar">⌬</span>
+                    <span class="player-tag__name">Gambit AI</span>
+                    <span class="player-tag__meta">2480 ELO · Black</span>
+                </div>
+
+                <!-- The square 8×8 board, built by script.js -->
+                <div class="board-frame">
+                    <div class="board" id="gameBoard"></div>
+                </div>
+
+                <!-- Bottom player tag (you) -->
+                <div class="player-tag player-tag--bottom">
+                    <span class="player-tag__avatar">♚</span>
+                    <span class="player-tag__name" id="dashUsername">You</span>
+                    <span class="player-tag__meta">1620 ELO · White</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Column 3 · Right info panel -->
+        <aside class="panel">
+            <!-- Active turn indicator -->
+            <div class="panel__section turn-indicator" id="turnIndicator">
+                <span class="turn-dot"></span>
+                <span class="turn-text">White to move</span>
+            </div>
+
+            <!-- Live move log -->
+            <div class="panel__section panel__moves">
+                <h2 class="panel__title">Move Log</h2>
+                <ol class="move-log" id="moveLog"></ol>
+            </div>
+
+            <!-- Match statistics -->
+            <div class="panel__section panel__stats">
+                <h2 class="panel__title">Match Stats</h2>
+                <dl class="stats-grid">
+                    <div class="stat">
+                        <dt>Moves</dt>
+                        <dd id="statMoves">0</dd>
+                    </div>
+                    <div class="stat">
+                        <dt>Captures</dt>
+                        <dd id="statCaptures">0</dd>
+                    </div>
+                    <div class="stat">
+                        <dt>Eval</dt>
+                        <dd id="statEval">+0.0</dd>
+                    </div>
+                    <div class="stat">
+                        <dt>Clock</dt>
+                        <dd id="statClock">10:00</dd>
+                    </div>
+                </dl>
+            </div>
+        </aside>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

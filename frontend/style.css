@@ -1,0 +1,504 @@
+/* ════════════════════════════════════════════════════════════════════════
+   GAMBIT · "Deep Charcoal and Matte Gold" theme
+   All design tokens live in :root so the palette, type, and metrics can be
+   retuned from a single place. Layout is pure CSS Grid + Flexbox — no
+   external UI frameworks.
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* — Charcoal palette (background → surface → border) — */
+    --charcoal-900: #0e0f12;   /* deepest background */
+    --charcoal-800: #141519;   /* base background */
+    --charcoal-700: #1b1d23;   /* raised surface */
+    --charcoal-600: #23262e;   /* cards / inputs */
+    --charcoal-500: #2e323c;   /* hover surface */
+    --line:         #34384300; /* placeholder, see --border */
+    --border:       rgba(214, 178, 102, 0.14);  /* hairline gold-tinted */
+    --border-strong:rgba(214, 178, 102, 0.30);
+
+    /* — Matte gold accent — */
+    --gold:        #d6b266;
+    --gold-soft:   #c4a25e;
+    --gold-dim:    rgba(214, 178, 102, 0.55);
+    --gold-glow:   rgba(214, 178, 102, 0.22);
+
+    /* — Text — */
+    --text-hi:  #f2efe9;   /* high-emphasis */
+    --text-mid: #b6b8bf;   /* secondary */
+    --text-lo:  #71747e;   /* muted / labels */
+
+    /* — Board square colours (charcoal + gold, never pure white) — */
+    --sq-light: #b9a173;
+    --sq-dark:  #2a2d35;
+    --sq-light-amb: #54565f;   /* ambient board, lower contrast */
+    --sq-dark-amb:  #22242b;
+
+    /* — Type — */
+    --font-display: "Cormorant Garamond", Georgia, serif;
+    --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+
+    /* — Metrics — */
+    --radius: 14px;
+    --radius-sm: 9px;
+    --gap: 24px;
+    --sidebar-w: 84px;
+    --panel-w: 320px;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+
+/* ─── Reset / base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+    margin: 0;
+    font-family: var(--font-ui);
+    color: var(--text-hi);
+    background: var(--charcoal-800);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* The view-management primitive: any screen with .hidden is removed. */
+.hidden { display: none !important; }
+
+/* Every screen fills the viewport. */
+.screen { min-height: 100vh; width: 100%; }
+
+button { font-family: inherit; cursor: pointer; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   SCREEN 1 · LANDING & AUTH
+═══════════════════════════════════════════════════════════════════════════ */
+.landing {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    background:
+        radial-gradient(1200px 600px at 0% -10%, #191b21 0%, transparent 60%),
+        var(--charcoal-900);
+}
+
+.landing__pane {
+    display: flex;
+    align-items: center;
+    padding: clamp(32px, 6vw, 88px);
+}
+
+/* — Left: auth — */
+.landing__pane--auth { justify-content: flex-end; }
+
+.auth-block { width: min(420px, 100%); }
+
+.brand-mark {
+    display: inline-block;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--gold);
+    margin-bottom: 28px;
+    text-shadow: 0 0 24px var(--gold-glow);
+}
+
+.eyebrow {
+    margin: 0 0 14px;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    font-weight: 600;
+}
+
+.hero-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(40px, 5.2vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
+}
+
+.hero-subtitle {
+    margin: 18px 0 40px;
+    color: var(--text-mid);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+}
+
+/* — Login form — */
+.auth-form { display: flex; flex-direction: column; gap: 18px; }
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+
+.field label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-lo);
+    font-weight: 600;
+}
+
+.field input {
+    appearance: none;
+    background: var(--charcoal-700);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    color: var(--text-hi);
+    font-size: 15px;
+    transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.field input::placeholder { color: var(--text-lo); }
+.field input:focus {
+    outline: none;
+    border-color: var(--border-strong);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+/* Shared button + the gold CTA variant */
+.btn {
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: transform 0.2s var(--ease), box-shadow 0.25s var(--ease),
+                background 0.25s var(--ease);
+}
+.btn--gold {
+    margin-top: 6px;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--gold-soft) 100%);
+    color: #20180a;
+    box-shadow: 0 10px 30px var(--gold-glow);
+}
+.btn--gold:hover { transform: translateY(-1px); box-shadow: 0 14px 38px var(--gold-glow); }
+.btn--gold:active { transform: translateY(0); }
+
+.auth-hint { margin: 4px 0 0; font-size: 12.5px; color: var(--text-lo); }
+
+/* — Right: ambient decorative board — */
+.landing__pane--visual { justify-content: center; }
+
+.ambient-stage {
+    position: relative;
+    width: min(560px, 100%);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ambient-glow {
+    position: absolute;
+    inset: -8%;
+    background: radial-gradient(circle at 50% 45%, var(--gold-glow), transparent 62%);
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.ambient-board {
+    position: relative;
+    width: 84%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow);
+    transform: rotateX(6deg) rotateZ(-2deg);
+}
+
+.ambient-caption {
+    position: absolute;
+    bottom: -6px;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+}
+
+/* Generic square + piece styles shared by both boards */
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(20px, 4.4vw, 44px);
+    line-height: 1;
+    user-select: none;
+}
+.square--light { background: var(--sq-light); }
+.square--dark  { background: var(--sq-dark); }
+
+/* Ambient board uses lower-contrast squares so it reads as a backdrop */
+.ambient-board .square--light { background: var(--sq-light-amb); }
+.ambient-board .square--dark  { background: var(--sq-dark-amb); }
+
+.piece {
+    transition: transform 0.55s var(--ease), opacity 0.4s var(--ease);
+    will-change: transform;
+}
+.piece--white { color: #f4efe6; text-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+.piece--black { color: #15161a; text-shadow: 0 1px 1px rgba(255,255,255,0.12); }
+
+/* The square a piece is moving to gets a brief gold pulse */
+.square--active { box-shadow: inset 0 0 0 3px var(--gold-dim); }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   SCREEN 2 · GAME DASHBOARD
+═══════════════════════════════════════════════════════════════════════════ */
+.dashboard {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--panel-w);
+    height: 100vh;
+    background: var(--charcoal-800);
+}
+
+/* — Column 1 · Sidebar — */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 22px 0;
+    background: var(--charcoal-900);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar__brand {
+    font-size: 30px;
+    color: var(--gold);
+    margin-bottom: 26px;
+    text-shadow: 0 0 18px var(--gold-glow);
+}
+
+.sidebar__nav { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    padding: 12px 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-lo);
+    border-left: 3px solid transparent;
+    transition: color 0.2s var(--ease), background 0.2s var(--ease),
+                border-color 0.2s var(--ease);
+}
+.nav-item__icon { font-size: 22px; line-height: 1; }
+.nav-item__label { font-size: 10px; letter-spacing: 0.08em; }
+
+.nav-item:hover { color: var(--text-mid); background: rgba(255,255,255,0.02); }
+
+/* Active state highlighted in gold */
+.nav-item.is-active {
+    color: var(--gold);
+    border-left-color: var(--gold);
+    background: linear-gradient(90deg, var(--gold-glow), transparent);
+}
+
+.sidebar__logout { margin-top: auto; }
+.sidebar__logout:hover { color: var(--gold-soft); }
+
+/* — Column 2 · Stage / gameplay — */
+.stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 4vh, 48px);
+    overflow: auto;
+}
+
+.stage__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    /* Keep the board square and bounded by the smaller viewport axis */
+    width: min(72vh, 100%);
+}
+
+/* Player tags above/below the board */
+.player-tag {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--charcoal-700);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.player-tag__avatar {
+    display: grid;
+    place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--charcoal-600);
+    color: var(--gold);
+    font-size: 20px;
+}
+.player-tag__name { font-weight: 600; font-size: 15px; }
+.player-tag__meta { margin-left: auto; color: var(--text-lo); font-size: 12.5px; letter-spacing: 0.03em; }
+
+/* The board frame keeps a perfect square via aspect-ratio */
+.board-frame {
+    padding: 12px;
+    background: var(--charcoal-700);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+.board {
+    aspect-ratio: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+/* — Column 3 · Info panel — */
+.panel {
+    display: flex;
+    flex-direction: column;
+    background: var(--charcoal-900);
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+}
+.panel__section { padding: 20px; border-bottom: 1px solid var(--border); }
+.panel__title {
+    margin: 0 0 14px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-lo);
+    font-weight: 600;
+}
+
+/* Turn indicator */
+.turn-indicator { display: flex; align-items: center; gap: 12px; }
+.turn-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px var(--gold-glow);
+    animation: pulse 1.8s var(--ease) infinite;
+}
+.turn-text { font-weight: 600; letter-spacing: 0.02em; }
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px var(--gold-glow); }
+    50%      { box-shadow: 0 0 0 7px transparent; }
+}
+
+/* Move log — scrollable, two-column rows (move number / white / black) */
+.panel__moves { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.move-log {
+    margin: 0; padding: 0; list-style: none;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 2px;
+}
+.move-log__row {
+    display: grid;
+    grid-template-columns: 34px 1fr 1fr;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+.move-log__row:nth-child(odd) { background: rgba(255,255,255,0.018); }
+.move-log__num { color: var(--text-lo); }
+.move-log__ply { color: var(--text-mid); }
+.move-log__ply--latest { color: var(--gold); font-weight: 600; }
+
+/* Match stats grid */
+.stats-grid {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.stat {
+    background: var(--charcoal-700);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+}
+.stat dt { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-lo); }
+.stat dd {
+    margin: 6px 0 0;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+}
+
+/* The scrollbar, tinted to match the theme */
+.move-log::-webkit-scrollbar, .stage::-webkit-scrollbar { width: 8px; }
+.move-log::-webkit-scrollbar-thumb, .stage::-webkit-scrollbar-thumb {
+    background: var(--charcoal-500); border-radius: 8px;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Tablet / small laptop: collapse the right panel under the board */
+@media (max-width: 1080px) {
+    .dashboard {
+        grid-template-columns: var(--sidebar-w) 1fr;
+        grid-template-rows: 1fr auto;
+        height: auto;
+        min-height: 100vh;
+    }
+    .stage { grid-column: 2; }
+    .panel {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid var(--border);
+    }
+    .panel__moves { max-height: 280px; }
+}
+
+/* Mobile: stack the landing panes, hide the ambient board, single column dash */
+@media (max-width: 760px) {
+    .landing { grid-template-columns: 1fr; }
+    .landing__pane--visual { display: none; }
+    .landing__pane--auth { justify-content: center; min-height: 100vh; }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+    /* Sidebar becomes a horizontal top bar */
+    .sidebar {
+        flex-direction: row;
+        padding: 10px 14px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    .sidebar__brand { margin: 0 12px 0 0; }
+    .sidebar__nav { flex-direction: row; width: auto; }
+    .nav-item { border-left: none; border-bottom: 3px solid transparent; padding: 8px 14px; }
+    .nav-item.is-active { border-left-color: transparent; border-bottom-color: var(--gold); }
+    .sidebar__logout { margin: 0 0 0 auto; }
+    .stage { grid-column: 1; }
+    .stage__inner { width: min(92vw, 480px); }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .piece, .btn { transition: none; }
+    .turn-dot { animation: none; }
+}
