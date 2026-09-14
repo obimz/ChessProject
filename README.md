@@ -1,63 +1,87 @@
-# Grandmaster Chess Club
+# Gambit Chess Demo
 
-A full-stack chess web application — FastAPI backend + vanilla JS frontend.
+This project is a small chess web app prototype built with a FastAPI backend and a vanilla JavaScript frontend. It includes an in-memory chess engine, a browser-based board UI, and a simple game lifecycle for creating and querying game states.
 
-## Project Structure
+It is a demo / portfolio-style app rather than a full production chess platform. The backend is intentionally lightweight and keeps game state in memory only.
 
-```
-grandmaster-chess/
+## What is in this project?
+
+- Backend API in `backend/main.py`
+  - Creates new chess games
+  - Returns the current game state
+  - Validates and applies legal moves using `python-chess`
+  - Serves the frontend from the same app
+- Frontend in `frontend/`
+  - A landing/login screen
+  - A chess board dashboard
+  - Demo UI animations and move scripts
+- Windows setup script in `setup.bat`
+
+## Current project structure
+
+```text
+ChessProject/
 ├── backend/
-│   ├── main.py              ← FastAPI application (all API routes)
-│   └── requirements.txt     ← Python dependencies
+│   ├── main.py
+│   └── requirements.txt
 ├── frontend/
-│   ├── index.html           ← Main page
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
 │   └── static/
-│       ├── css/style.css
+│       ├── css/
 │       └── js/
-│           ├── board.js     ← FEN → DOM renderer
-│           ├── api.js       ← Fetch calls to backend
-│           └── main.js      ← UI controller / event handlers
-├── setup.bat                ← One-click Windows setup
-└── README.md
+├── setup.bat
+├── README.md
+└── .gitignore
 ```
 
-## Phase 1 Setup (Windows)
+## Important note
 
-### Step 1 — Run the setup script (once only)
-Double-click `setup.bat` in the project root, or run it from a terminal:
+The frontend is not a fully separate React/Vite app. The `frontend` folder is a static browser app, and the FastAPI server serves it from the main app entry point. Some older docs in this repo refer to a different architecture and do not match the current code.
+
+## Setup on Windows
+
+### Option 1: use the setup script
+
+From the project root:
 
 ```bat
 setup.bat
 ```
 
-This creates a virtual environment and installs all dependencies.
+This creates a virtual environment and installs the requirements.
 
-### Step 2 — Start the server
+### Option 2: do it manually
+
+```bat
+py -3.13 -m venv venv
+venv\Scripts\activate.bat
+pip install -r backend\requirements.txt
+```
+
+## Run the app
 
 ```bat
 venv\Scripts\activate.bat
 python backend\main.py
 ```
 
-### Step 3 — Open the app
+Then open:
 
-| URL | What you'll see |
-|-----|-----------------|
-| `http://127.0.0.1:8000` | The chess UI |
-| `http://127.0.0.1:8000/docs` | Interactive API docs (Swagger UI) |
-| `http://127.0.0.1:8000/redoc` | Alternative API docs |
+- http://127.0.0.1:8000/
+- http://127.0.0.1:8000/docs
 
----
+## API overview
 
-## API Reference
+### GET /api/game/init
+Creates a new chess game and returns the starting board state.
 
-### `GET /api/game/init`
-Creates a new game and returns the starting board state.
+Example response:
 
-**Response:**
 ```json
 {
-  "game_id": "3f9a1b2c-...",
+  "game_id": "3f9a1b2c-4e57-4b33-9c02-f7e5f8f4a12d",
   "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "turn": "white",
   "status": "active",
@@ -65,16 +89,40 @@ Creates a new game and returns the starting board state.
 }
 ```
 
-### `GET /api/game/{game_id}`
-Returns current state of an existing game.
+### GET /api/game/{game_id}
+Returns the current state of a stored game.
 
----
+### POST /api/game/move
+Submits a move in UCI format such as `e2e4`.
 
-## Roadmap
+Request body:
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Backend foundation + board render | ✅ Done |
-| 2 | Move validation (`POST /api/game/move`) | 🔜 Next |
-| 3 | WebSocket multiplayer sync | 🔜 Upcoming |
-| 4 | Full frontend integration | 🔜 Upcoming |
+```json
+{
+  "game_id": "3f9a1b2c-4e57-4b33-9c02-f7e5f8f4a12d",
+  "move": "e2e4"
+}
+```
+
+## Current limitations
+
+- Game data is stored in memory only; it resets when the server restarts.
+- There is no database or persistent login system.
+- The frontend is mostly a visual demo and does not fully integrate with the backend in the same way a full game client would.
+- The app is best treated as a learning / prototype project.
+
+## Tech stack
+
+- Python 3.13+
+- FastAPI
+- python-chess
+- Vanilla JavaScript
+- HTML + CSS
+
+## Next possible improvements
+
+- Add better move UI and board interaction
+- Persist games to a database
+- Add authentication / user sessions
+- Add multiplayer or online game synchronization
+- Expand the frontend to fully drive the API in a richer browser experience

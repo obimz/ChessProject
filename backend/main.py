@@ -34,6 +34,7 @@ app.add_middleware(
 # Serve the frontend from the /frontend folder
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_DIR, "static")), name="static")
+app.mount("/assets", StaticFiles(directory=FRONTEND_DIR), name="assets")
 
 
 active_games: dict[str, chess.Board] = {}
@@ -186,4 +187,5 @@ async def make_move(request: MoveRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    print("Server starting at http://127.0.0.1:8000", flush=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, log_level="info")
